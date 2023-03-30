@@ -1,12 +1,27 @@
-import { useNavigationState } from '@react-navigation/native';
-import { useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { useState, useCallback, useEffect } from 'react';
+import { Text, View, StyleSheet, TouchableOpacity, RefreshControl } from 'react-native';
 import { FlatList } from 'react-native';
 import { PRIMARY_COLOR, BACKGROUND_COLOR } from '../assets/constant';
+import * as FileSystem from 'expo-file-system';
+
 export default function HomeScreen({ navigation }) {
   const contactJson = require('../data.json');
   const [contactList, setContactList] = useState(contactJson);
-  
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    const path = `${FileSystem.documentDirectory}/data.json`;
+    const data = await FileSystem.readAsStringAsync(path);
+    setContactList(JSON.parse(data));
+    setRefreshing(false);
+  }, []);
+
+  useEffect(() => {
+    console.log('refresh');
+  }, [contactList]);
+
+
   // component
   const ItemSeparator = () => {
     return <View style={styles.separator} />;
@@ -37,6 +52,9 @@ export default function HomeScreen({ navigation }) {
         renderItem={ContactListItem}
         ItemSeparatorComponent={ItemSeparator}
         keyExtractor={(item) => item.id.toString()}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
     </View>
   );

@@ -26,12 +26,13 @@ const RoundIcon = () => {
 };
 
 export default function DetailsScreen({ route, navigation }) {
-  useEffect(() => {
+  useEffect(async () => {
     navigation.setOptions({
       title: '',
       headerLeft: () => (
         <TouchableOpacity
           onPress={() => {
+            writeToJsonFile();
             navigation.goBack();
           }}
         >
@@ -41,7 +42,7 @@ export default function DetailsScreen({ route, navigation }) {
       headerRight: () => (
         <TouchableOpacity
           onPress={() => {
-            submit();
+            // submit();
             navigation.navigate('Home');
           }}
         >
@@ -51,11 +52,11 @@ export default function DetailsScreen({ route, navigation }) {
     });
   }, []);
 
-  const contactJson = require('../data.json');
+  let contactJson = require('../data.json');
   
   const [contactList, setContactList] = useState(contactJson);
   const [contactData, setContactData] = useState(route.params.item);
-
+  
   const updateContactData = (key, value) => {
     setContactData({ ...contactData, [key]: value });
   };
@@ -63,17 +64,20 @@ export default function DetailsScreen({ route, navigation }) {
     updateContactList();
   }, [contactData]);
 
+  useEffect(() => {
+    writeToJsonFile();
+  }, [contactList]);
+
   const updateContactList = () => {
     const index = contactList.findIndex((item) => item.id === contactData.id);
     const updatedContactList = [...contactList];
     updatedContactList[index] = contactData;
     setContactList(updatedContactList);
   }
-  const submit = async () => {
-    const payload = [...contactList];
-    console.log(FileSystem.documentDirectory+ '/data.json');
-    const path = `${FileSystem.documentDirectory}data.json`;
-    const updatedData = JSON.stringify(payload);
+ 
+  const writeToJsonFile = async () => {
+    const path = `${FileSystem.documentDirectory}/data.json`;
+    const updatedData = JSON.stringify(contactList);
     await FileSystem.writeAsStringAsync(path, updatedData);
   };
   return (
