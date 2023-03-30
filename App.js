@@ -1,12 +1,43 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Ionicons } from '@expo/vector-icons';
+import HomeScreen from './screens/HomeScreen';
+import DetailScreen from './screens/DetailScreen';
+import { PRIMARY_COLOR } from './assets/constant';
 
 export default function App() {
+  const Stack = createStackNavigator();
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen 
+          name="Home" 
+          component={HomeScreen} 
+          options={{
+            title: 'Contacts',
+            headerTitleAlign: 'center',
+            headerLeft: () => (
+              <Ionicons
+                name="search"
+                size={30}
+                color={PRIMARY_COLOR}
+              />
+            ),
+            headerRight: () => (
+              <Ionicons
+                name="add"
+                size={30}
+                color={PRIMARY_COLOR}
+              />
+            ),
+          }}
+        />
+        <Stack.Screen name="Details" component={DetailScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
