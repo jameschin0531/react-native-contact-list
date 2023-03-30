@@ -1,11 +1,170 @@
-import { Button } from 'react-native';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { PRIMARY_COLOR, BACKGROUND_COLOR, LIGHT_GREY_COLOR } from '../assets/constant';
+import * as FileSystem from 'expo-file-system';
 
-export default function DetailsScreen({ navigation }) {
+const FormInput = ({ label, ...rest }) => {
   return (
-    <Button
-      title="Go back"
-      onPress={() => navigation.navigate('Home')}
-    />
+    <View style={styles.inputContainer}>
+      <Text style={styles.label}>{label}</Text>
+      <TextInput style={styles.input} {...rest} />
+    </View>
   );
-}
+};
+
+const ItemSeparator = () => {
+  return <View style={styles.separator} />;
+};
+
+const RoundIcon = () => {
+  return (
+    <View style={styles.iconContainer}>
+      <View style={styles.icon} />
+    </View>
+  );
+};
+
+export default function DetailsScreen({ route, navigation }) {
+  useEffect(() => {
+    navigation.setOptions({
+      title: '',
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={() => {
+            navigation.goBack();
+          }}
+        >
+          <Text style={styles.headerButtonText}>Cancel</Text>
+        </TouchableOpacity>
+      ),
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => {
+            submit();
+            navigation.navigate('Home');
+          }}
+        >
+          <Text style={styles.headerButtonText}>Save</Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
+
+  const contactJson = require('../data.json');
+  
+  const [contactList, setContactList] = useState(contactJson);
+  const [contactData, setContactData] = useState(route.params.item);
+
+  const updateContactData = (key, value) => {
+    setContactData({ ...contactData, [key]: value });
+  };
+  useEffect(() => {
+    updateContactList();
+  }, [contactData]);
+
+  const updateContactList = () => {
+    const index = contactList.findIndex((item) => item.id === contactData.id);
+    const updatedContactList = [...contactList];
+    updatedContactList[index] = contactData;
+    setContactList(updatedContactList);
+  }
+  const submit = async () => {
+    const payload = [...contactList];
+    console.log(FileSystem.documentDirectory+ '/data.json');
+    const path = `${FileSystem.documentDirectory}data.json`;
+    const updatedData = JSON.stringify(payload);
+    await FileSystem.writeAsStringAsync(path, updatedData);
+  };
+  return (
+    <View style={styles.container}>
+      <RoundIcon />
+      <View style={styles.formContainer}>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Main Information</Text>
+        </View>
+        <View style={styles.formInputContainer} >
+          <FormInput label="First Name" value={contactData.firstName ?? ''} onChangeText={(value) => updateContactData('firstName', value)} />
+          <ItemSeparator />
+          <FormInput label="Last Name" value={contactData.lastName ?? ''} onChangeText={(value) => updateContactData('lastName', value)} />
+        </View>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Sub Information</Text>
+        </View>
+        <View style={styles.formInputContainer} >
+          <FormInput label="Email" value={contactData.email ?? ''} onChangeText={(value) => updateContactData('email', value)} />
+          <ItemSeparator />
+          <FormInput label="Phone" value={contactData.phone ?? ''} onChangeText={(value) => updateContactData('phone', value)} />
+          <ItemSeparator />
+        </View>
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    flexDirection: 'column',
+    backgroundColor: BACKGROUND_COLOR,
+  },
+  formContainer: {
+    flex: 1,
+  },
+  header: {
+    backgroundColor: LIGHT_GREY_COLOR,
+    paddingVertical: 5,
+    paddingHorizontal: 20,
+  },
+  headerText: {
+    fontSize: 20,
+    fontWeight: 500,
+  },
+  formInputContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 5,
+  },
+  inputContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  label: {
+    fontSize: 16,
+    flex: 0.3,
+  },
+  input: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 5,
+    fontSize: 16,
+    flex: 0.7,
+  },
+  iconContainer: {
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  icon: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: PRIMARY_COLOR,
+  },
+  separator: {
+    width: '100%',
+    height: 1,
+    backgroundColor: '#ddd',
+    marginVertical: 5,
+  },
+  headerButtonText: {
+    fontSize: 16,
+    fontWeight: 500,
+    color: PRIMARY_COLOR,
+    marginVertical: 10,
+  }
+});
+
