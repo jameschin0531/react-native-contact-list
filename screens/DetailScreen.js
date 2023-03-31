@@ -32,7 +32,7 @@ export default function DetailsScreen({ route, navigation }) {
       headerLeft: () => (
         <TouchableOpacity
           onPress={() => {
-            writeToJsonFile();
+            writeToJsonFile('back');
             navigation.goBack();
           }}
         >
@@ -53,10 +53,10 @@ export default function DetailsScreen({ route, navigation }) {
   }, []);
 
   let contactJson = require('../data.json');
-  
+
   const [contactList, setContactList] = useState(contactJson);
   const [contactData, setContactData] = useState(route.params.item);
-  
+
   const updateContactData = (key, value) => {
     setContactData({ ...contactData, [key]: value });
   };
@@ -74,10 +74,15 @@ export default function DetailsScreen({ route, navigation }) {
     updatedContactList[index] = contactData;
     setContactList(updatedContactList);
   }
- 
-  const writeToJsonFile = async () => {
+
+  const writeToJsonFile = async (type = 'save') => {
     const path = `${FileSystem.documentDirectory}/data.json`;
-    const updatedData = JSON.stringify(contactList);
+    let updatedData = [];
+    if (type === 'back') {
+      updatedData = await FileSystem.readAsStringAsync(path);
+    } else {
+      updatedData = JSON.stringify(contactList);
+    }
     await FileSystem.writeAsStringAsync(path, updatedData);
   };
   return (
