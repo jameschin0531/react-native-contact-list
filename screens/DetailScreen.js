@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
-import { PRIMARY_COLOR, BACKGROUND_COLOR, LIGHT_GREY_COLOR } from '../assets/constant';
+import { PRIMARY_COLOR, BACKGROUND_COLOR, LIGHT_GREY_COLOR, STANDARD_TEXT_FONT_SIZE, HEADER_FONT_SIZE } from '../assets/constant';
 import * as FileSystem from 'expo-file-system';
 
 const FormInput = ({ label, ...rest }) => {
@@ -35,12 +35,14 @@ export default function DetailsScreen({ route, navigation }) {
             writeToJsonFile('back');
             navigation.goBack();
           }}
+          style={{ marginLeft: 10 }}
         >
           <Text style={styles.headerButtonText}>Cancel</Text>
         </TouchableOpacity>
       ),
       headerRight: () => (
         <TouchableOpacity
+          style={{ marginRight: 10 }}
           onPress={() => {
             // submit();
             navigation.navigate('Home');
@@ -127,7 +129,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   headerText: {
-    fontSize: 20,
+    fontSize: HEADER_FONT_SIZE,
     fontWeight: 500,
   },
   formInputContainer: {
@@ -141,7 +143,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   label: {
-    fontSize: 16,
+    fontSize: STANDARD_TEXT_FONT_SIZE,
     flex: 0.3,
   },
   input: {
@@ -150,7 +152,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 5,
     padding: 5,
-    fontSize: 16,
+    fontSize: STANDARD_TEXT_FONT_SIZE,
     flex: 0.7,
   },
   iconContainer: {
@@ -170,7 +172,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   headerButtonText: {
-    fontSize: 16,
+    fontSize: STANDARD_TEXT_FONT_SIZE,
     fontWeight: 500,
     color: PRIMARY_COLOR,
     marginVertical: 10,

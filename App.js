@@ -24,6 +24,7 @@ export default function App() {
                 name="search"
                 size={30}
                 color={PRIMARY_COLOR}
+                style= {{marginLeft: 10}}
               />
             ),
             headerRight: () => (
@@ -31,6 +32,7 @@ export default function App() {
                 name="add"
                 size={30}
                 color={PRIMARY_COLOR}
+                style= {{marginRight: 10}}
               />
             ),
           }}

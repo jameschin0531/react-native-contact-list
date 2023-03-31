@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, RefreshControl } from 'react-native';
 import { FlatList } from 'react-native';
-import { PRIMARY_COLOR, BACKGROUND_COLOR } from '../assets/constant';
+import { PRIMARY_COLOR, BACKGROUND_COLOR, STANDARD_TEXT_FONT_SIZE, HEADER_FONT_SIZE } from '../assets/constant';
 import * as FileSystem from 'expo-file-system';
 
 export default function HomeScreen({ navigation }) {
@@ -16,11 +16,6 @@ export default function HomeScreen({ navigation }) {
     setContactList(JSON.parse(data));
     setRefreshing(false);
   }, []);
-
-  useEffect(() => {
-    console.log('refresh');
-  }, [contactList]);
-
 
   // component
   const ItemSeparator = () => {
@@ -61,18 +56,18 @@ export default function HomeScreen({ navigation }) {
 }
 const styles = StyleSheet.create({
     listItemContainer: {
-      backgroundColor: '#fff',
+      backgroundColor: BACKGROUND_COLOR,
       padding: 5,
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
     },
     listItemText: {
-      fontSize: 18,
+      fontSize: HEADER_FONT_SIZE,
       marginLeft: 12,
     },
     description: {
-      fontSize: 16,
+      fontSize: STANDARD_TEXT_FONT_SIZE,
     },
     iconContainer: {
       width: 50,
